@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Disposable Temp Mail</title>
+    
+    <!-- Favicon Integration -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23a855f7' d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/></svg>">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --bg-gradient: radial-gradient(circle at 50% -20%, #2e1065 0%, #090d16 60%);
+            --card-bg: rgba(19, 27, 46, 0.75);
+            --input-bg: rgba(15, 23, 42, 0.9);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-1: #a855f7;
+            --accent-2: #06b6d4;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --header-bg: rgba(9, 13, 22, 0.4);
+            --row-bg: rgba(15, 23, 42, 0.5);
+            --row-hover: rgba(30, 41, 59, 0.7);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --input-bg: rgba(241, 245, 249, 1);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-1: #9333ea;
+            --accent-2: #0284c7;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --header-bg: rgba(255, 255, 255, 0.7);
+            --row-bg: rgba(248, 250, 252, 1);
+            --row-hover: rgba(226, 232, 240, 1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-toggle {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover { opacity: 0.8; }
+
+        .wrapper {
+            flex: 1;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h2 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+
+        .email-display-box {
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            border: 2px solid var(--accent-1);
+            border-radius: 14px;
+            padding: 8px 8px 8px 20px;
+            margin-bottom: 25px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            gap: 10px;
+        }
+
+        .email-display-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 18px;
+            font-weight: 700;
+            outline: none;
+        }
+
+        .email-display-box select {
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover { opacity: 0.85; transform: translateY(-2px); }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: #ffffff; border: none;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .inbox-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .inbox-table-header {
+            display: grid;
+            grid-template-columns: 2fr 4fr 1fr;
+            background: var(--input-bg);
+            padding: 15px 25px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .inbox-body {
+            min-height: 180px;
+            padding: 25px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .email-row {
+            display: grid;
+            grid-template-columns: 2fr 4fr 1fr;
+            padding: 15px 20px;
+            background: var(--row-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 15px;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .email-row:hover { background: var(--row-hover); }
+
+        .info-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+        .info-section h3 { font-size: 20px; margin-bottom: 12px; font-weight: 700; }
+        .info-section p { color: var(--text-muted); font-size: 14px; line-height: 1.7; max-width: 900px; margin: 0 auto; }
+
+        footer {
+            text-align: center; padding: 20px; color: var(--text-muted);
+            font-size: 13px; border-top: 1px solid var(--border-color); background: var(--header-bg);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <header>
+        <div class="logo">⚡ VORTEXMAIL</div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
+        </button>
+    </header>
+
+    <div class="wrapper">
+        <div class="main-card">
+            <h2>Your Temporary Email Address</h2>
+            <p class="subtitle">Bypass domain restrictions, secure your privacy, and receive instant OTPs safely.</p>
+            
+            <div class="email-display-box">
+                <input type="text" id="userInput" placeholder="username" oninput="updateEmailString()">
+                <span style="font-weight:700; color:var(--accent-1);">@</span>
+                <select id="domainSelect" onchange="updateEmailString()">
+                    <option value="1secmail.com">1secmail.com</option>
+                    <option value="1secmail.org">1secmail.org</option>
+                    <option value="esiix.com">esiix.com</option>
+                    <option value="exsip.com">exsip.com</option>
+                </select>
+                <button class="btn" onclick="copyEmail()" style="border:none; background:transparent; font-size:18px;" title="Copy">📋</button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="copyEmail()">📋 Copy Email</button>
+                <button class="btn" onclick="fetchInbox()">🔄 Refresh Inbox</button>
+                <button class="btn" onclick="generateNewEmail()">🎲 Randomize</button>
+                <button class="btn" onclick="clearInbox()">🗑️ Clear</button>
+            </div>
+        </div>
+
+        <div class="inbox-section">
+            <div class="inbox-table-header">
+                <div>Sender</div>
+                <div>Subject</div>
+                <div style="text-align: right;">Action</div>
+            </div>
+            <div class="inbox-body" id="inboxList">
+                <p style="margin-top: 50px; font-weight: 500; font-size: 16px;">Your inbox is empty</p>
+                <p style="font-size: 13px;">Waiting for incoming OTPs & emails live...</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>What is Disposable Temporary E-mail?</h3>
+            <p><strong>Disposable email</strong> is a free email service that allows you to receive email at a temporary address that self-destructs after a certain time elapses. It protects your personal identity against unsolicited spam and data tracking.</p>
+        </div>
+    </div>
+
+    <footer>
+        Copyright © 2026 VortexMail. All rights reserved.
+    </footer>
+
+    <script>
+        let pollInterval;
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.textContent = '🌙'; themeText.textContent = 'Dark Mode';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️'; themeText.textContent = 'Light Mode';
+            }
+        }
+
+        function generateNewEmail() {
+            const randomString = 'user_' + Math.random().toString(36).substring(2, 9);
+            document.getElementById('userInput').value = randomString;
+            const select = document.getElementById('domainSelect');
+            select.selectedIndex = Math.floor(Math.random() * select.options.length);
+            updateEmailString();
+        }
+
+        function updateEmailString() {
+            const user = document.getElementById('userInput').value.trim() || 'mymail';
+            const domain = document.getElementById('domainSelect').value;
+            login = user;
+            domainName = domain;
+
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(fetchInbox, 4000);
+        }
+
+        let login = '';
+        let domainName = '';
+
+        async function fetchInbox() {
+            const user = document.getElementById('userInput').value.trim();
+            const domain = document.getElementById('domainSelect').value;
+            if (!user) return;
+
+            try {
+                const res = await fetch(`https://www.1secmail.com/api/v1/?action=getMessages&login=${user}&domain=${domain}`);
+                const messages = await res.json();
+                
+                const inboxList = document.getElementById('inboxList');
+                if (!messages || messages.length === 0) return;
+
+                inboxList.innerHTML = '';
+                for (let msg of messages) {
+                    const detailRes = await fetch(`https://www.1secmail.com/api/v1/?action=readMessage&login=${user}&domain=${domain}&id=${msg.id}`);
+                    const detail = await detailRes.json();
+
+                    inboxList.innerHTML += `
+                        <div class="email-row">
+                            <div style="font-weight: 600; overflow:hidden; text-overflow: ellipsis;">${detail.from}</div>
+                            <div style="color: var(--accent-2); overflow:hidden; text-overflow: ellipsis; font-weight: 500;">${detail.subject || 'No Subject'}</div>
+                            <div style="text-align: right;"><button class="btn btn-primary" style="padding: 6px 14px; font-size:13px;" onclick="alert(\`${detail.textBody || detail.body || 'No content'}\`)">View</button></div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to fetch messages:', error);
+            }
+        }
+
+        function copyEmail() {
+            const user = document.getElementById('userInput').value.trim();
+            const domain = document.getElementById('domainSelect').value;
+            const fullEmail = `${user}@${domain}`;
+            navigator.clipboard.writeText(fullEmail);
+            alert('✨ Email copied to clipboard successfully!');
+        }
+
+        function clearInbox() {
+            document.getElementById('inboxList').innerHTML = `
+                <p style="margin-top: 50px; font-weight: 500; font-size: 16px;">Your inbox is empty</p>
+                <p style="font-size: 13px;">Waiting for incoming OTPs & emails live...</p>
+            `;
+        }
+
+        generateNewEmail();
+    </script>
+</body>
+</html>
